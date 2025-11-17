@@ -1,0 +1,74 @@
+services:
+  nginx1:
+    image: nginx:1.29.3
+    container_name: nginx1
+    ports:
+      - "8080:80"
+    volumes: 
+      - ./tpfinal:/var/www/html
+      - ./config/nginx/default1.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php1
+    networks:
+      - projetfinaldocker
+
+  nginx2:
+    image: nginx:1.29.3
+    container_name: nginx2
+    ports:
+      - "8081:80"
+    volumes: 
+      - ./tpfinal:/var/www/html
+      - ./config/nginx/default2.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php2
+    networks:
+      - projetfinaldocker
+
+  php1:
+    build: 
+      context: .
+      dockerfile: ./docker/php/dockerfile
+    container_name: php1
+    environment:
+      PHP_SERVER: 1
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "php artisan migrate:fresh --seed &&
+              php-fpm"
+    networks: 
+      - projetfinaldocker
+
+  php2:
+    build: 
+      context: .
+      dockerfile: ./docker/php/dockerfile
+    container_name: php2
+    environment:
+      PHP_SERVER: 2
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: 
+      - projetfinaldocker
+
+  db:
+    image: mysql:9.1.0
+    container_name: db
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: projetfinal
+    networks:
+      - projetfinaldocker
+
+networks:
+  projetfinaldocker:
+    driver: bridge

@@ -1,0 +1,26 @@
+FROM php:8.2.29-fpm
+
+RUN apt update && apt install -y \
+    curl \
+    nodejs npm \
+    zip \
+    unzip \
+    libzip-dev
+
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    mysqli \
+    zip
+    
+COPY ./tpfinal /var/www/html
+RUN chmod 777 -R /var/www/html
+WORKDIR /var/www/html
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+RUN composer update
+RUN composer install
+RUN npm install
+RUN npm run build
+RUN php artisan key:generate
+#RUN php artisan migrate:fresh --seed
