@@ -31,7 +31,7 @@
                         <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Log in</a>
 
                         @if (Route::has('register'))
-                            <h1>test <?php echo env('PHP_SERVER', 'unknow') ?></h1>
+                            <h1>Server <?php echo env('PHP_SERVER', 'unknow'); echo env('APP_KEY', 'undefined') ?></h1>
                             <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 underline">Register</a>
                         @endif
                     @endauth
