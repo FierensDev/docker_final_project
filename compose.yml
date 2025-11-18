@@ -70,11 +70,9 @@ services:
     image: mysql:9.1.0
     container_name: db
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot", "--silent"]
-      interval: 3s
-      timeout: 5s
-      retries: 20
-      start_period: 30s
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
