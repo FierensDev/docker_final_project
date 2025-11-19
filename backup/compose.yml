@@ -32,11 +32,14 @@ services:
       context: .
       dockerfile: ./docker/php/dockerfile
     container_name: php1
-    volumes:
-      - ./tpfinal:/var/www/html
+    environment:
+      PHP_SERVER: 1
     depends_on:
       db:
         condition: service_healthy
+    command: >
+      bash -c "php artisan migrate:fresh --seed &&
+              php-fpm"
     healthcheck:
       test: ["CMD-SHELL", "pidof php-fpm"]
       interval: 5s
@@ -52,8 +55,6 @@ services:
     container_name: php2
     environment:
       PHP_SERVER: 2
-    volumes:
-      - ./tpfinal:/var/www/html
     depends_on:
       db:
         condition: service_healthy
@@ -78,12 +79,7 @@ services:
       MYSQL_DATABASE: projetfinal
     networks:
       - projetfinaldocker
-    volumes:
-    - db_final_project:/var/lib/mysql
 
 networks:
   projetfinaldocker:
     driver: bridge
-
-volumes:
-  db_final_project:

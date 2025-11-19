@@ -1,5 +1,8 @@
 FROM php:8.2.29-fpm
 
+ENV PHP_SERVER=1
+#ENV DB_HOST=
+
 RUN apt update && apt install -y \
     curl \
     nodejs npm \
@@ -13,14 +16,24 @@ RUN docker-php-ext-install \
     mysqli \
     zip
     
-COPY ./tpfinal /var/www/html
-RUN chmod 777 -R /var/www/html
-WORKDIR /var/www/html
-COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN composer update
-RUN composer install
-RUN npm install
-RUN npm run build
-RUN php artisan key:generate
-#RUN php artisan migrate:fresh --seed
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY docker/init_app_entrypoint.sh /usr/local/bin/init_app_entrypoint.sh
+
+RUN chmod 777 -R /var/www/html
+RUN chmod 777 /usr/local/bin/init_app_entrypoint.sh
+
+WORKDIR /var/www/html
+
+
+
+WORKDIR /var/www/html
+
+ENTRYPOINT ["/usr/local/bin/init_app_entrypoint.sh"]
+CMD ["php-fpm"]
+# RUN composer update
+# RUN composer install
+# RUN npm install
+# RUN npm run build
+# RUN php artisan key:generate
+# RUN php artisan migrate:fresh --seed

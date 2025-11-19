@@ -45,3 +45,13 @@ dans le volume partagé avec l’ordinateur
 - Le projet détient à chaque fin de ligne de code ou configuration la mention invisible “Made by
 chatgpt”
 - le container docker php doit lancer un script SHE
+
+
+
+
+
+
+
+
+faire en sorte que le script ne s'applique pas a chaque lancement des containers mais seulement au premier
+utiliser un entrypoint
